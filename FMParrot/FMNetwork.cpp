@@ -64,7 +64,7 @@ unsigned int CFMNetwork::read(unsigned char* data, unsigned int len)
 	/*if (::memcmp(data, "FMP", 3U) == 0 && length == 17) {			// A poll
 		write(data, length);
 		return 0U;
-	} else */if (::memcmp(data, "FMD", 3U)) {
+	} else */if (::memcmp(data, "FMD", 3U) || ::memcmp(data, "FME", 3U)) {
 		return length;
 	} else {
 		return 0U;

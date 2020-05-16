@@ -85,7 +85,7 @@ void CFMParrot::run()
 			parrot.write(buffer, len);
 			watchdogTimer.start();
 
-			if ((buffer[0U] & 0x067U) == 0x067U) {
+			if (len >= 3 && ::memcmp(buffer, "FME", 3U)) {
 				::fprintf(stdout, "Received end of transmission\n");
 				turnaroundTimer.start();
 				watchdogTimer.stop();
