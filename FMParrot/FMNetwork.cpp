@@ -61,10 +61,10 @@ unsigned int CFMNetwork::read(unsigned char* data, unsigned int len)
 	m_address.s_addr = address.s_addr;
 	m_port = port;
 
-	/*if (::memcmp(data, "FMP", 3U) == 0 && length == 17) {			// A poll
+	if (::memcmp(data, "FMP", 3U) == 0 && length == 17) {			// A poll
 		write(data, length);
 		return 0U;
-	} else */if (::memcmp(data, "FMD", 3U) || ::memcmp(data, "FME", 3U)) {
+	} else if (len >=  3 && (::memcmp(data, "FMD", 3U) || ::memcmp(data, "FME", 3U))) {
 		return length;
 	} else {
 		return 0U;
