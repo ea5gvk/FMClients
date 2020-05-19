@@ -1,3 +1,16 @@
+Debug
+Release
+x64
 FMParrot/FMParrot
 *.o
-*.d
+*.opendb
+*.bak
+*.obj
+*~
+*.sdf
+*.log
+*.zip
+*.exe
+*.user
+*.VC.db
+.vs
