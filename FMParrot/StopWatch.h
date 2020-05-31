@@ -31,18 +31,17 @@ public:
 	CStopWatch();
 	~CStopWatch();
 
-	unsigned long long time() const;
-
 	unsigned long long start();
 	unsigned int       elapsed();
+	unsigned int       elapsedMilliSeconds();
 
 private:
 #if defined(_WIN32) || defined(_WIN64)
 	LARGE_INTEGER  m_frequencyS;
-	LARGE_INTEGER  m_frequencyMS;
+	LARGE_INTEGER  m_frequencyMicroS;
 	LARGE_INTEGER  m_start;
 #else
-	unsigned long long m_startMS;
+	unsigned long long m_startMicroSec;
 #endif
 };
 
