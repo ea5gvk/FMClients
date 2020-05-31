@@ -98,6 +98,7 @@ void CFMParrot::run()
 				playoutTimer.start();
 				playing = true;
 				count = 0U;
+				::fprintf(stdout, "Started\n");
 			}
 
 			// A frame every 10.5ms
