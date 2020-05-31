@@ -101,7 +101,7 @@ void CFMParrot::run()
 			}
 
 			// A frame every 10.5ms
-			unsigned int wanted = playoutTimer.elapsed()  / 10;
+			unsigned int wanted = playoutTimer.elapsed()  / 10500;
 			while (count < wanted) {
 				len = parrot.read(buffer);
 				if (len > 0U) {
@@ -119,7 +119,7 @@ void CFMParrot::run()
 			}
 		}
 
-		unsigned int ms = stopWatch.elapsed();
+		unsigned int ms = stopWatch.elapsedMilliSeconds();
 		stopWatch.start();
 
 		watchdogTimer.clock(ms);

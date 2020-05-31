@@ -27,26 +27,18 @@ m_start()
 {
 	::QueryPerformanceFrequency(&m_frequencyS);
 
-	m_frequencyMS.QuadPart = m_frequencyS.QuadPart / 1000ULL;
+	m_frequencyMS.QuadPart = m_frequencyS.QuadPart;
 }
 
 CStopWatch::~CStopWatch()
 {
 }
 
-unsigned long long CStopWatch::time() const
-{
-	LARGE_INTEGER now;
-	::QueryPerformanceCounter(&now);
-
-	return (unsigned long long)(now.QuadPart / m_frequencyMS.QuadPart);
-}
-
 unsigned long long CStopWatch::start()
 {
 	::QueryPerformanceCounter(&m_start);
 
-	return (unsigned long long)(m_start.QuadPart / m_frequencyS.QuadPart);
+	return (unsigned long long)(m_start.QuadPart / m_frequencyMicroS.QuadPart);
 }
 
 unsigned int CStopWatch::elapsed()
@@ -55,9 +47,14 @@ unsigned int CStopWatch::elapsed()
 	::QueryPerformanceCounter(&now);
 
 	LARGE_INTEGER temp;
-	temp.QuadPart = (now.QuadPart - m_start.QuadPart) * 1000;
+	temp.QuadPart = (now.QuadPart - m_start.QuadPart);
 
-	return (unsigned int)(temp.QuadPart / m_frequencyS.QuadPart);
+	return (unsigned int)(temp.QuadPart / m_frequencyMicroS.QuadPart);
+}
+
+unsigned int CStopWatch::elapsedMilliSeconds()
+{
+	return elapsed() / 1000U;
 }
 
 #else
@@ -66,7 +63,7 @@ unsigned int CStopWatch::elapsed()
 #include <ctime>
 
 CStopWatch::CStopWatch() :
-m_startMS(0ULL)
+m_startMicroSec(0ULL)
 {
 }
 
@@ -74,22 +71,14 @@ CStopWatch::~CStopWatch()
 {
 }
 
-unsigned long long CStopWatch::time() const
-{
-	struct timeval now;
-	::gettimeofday(&now, NULL);
-
-	return now.tv_sec * 1000ULL + now.tv_usec / 1000ULL;
-}
-
 unsigned long long CStopWatch::start()
 {
 	struct timespec now;
 	::clock_gettime(CLOCK_MONOTONIC, &now);
 
-	m_startMS = now.tv_sec * 1000ULL + now.tv_nsec / 1000000ULL;
+	m_startMicroSec = now.tv_sec * 1000000ULL + now.tv_nsec / 1000ULL;
 
-	return m_startMS;
+	return m_startMicroSec;
 }
 
 unsigned int CStopWatch::elapsed()
@@ -97,9 +86,14 @@ unsigned int CStopWatch::elapsed()
 	struct timespec now;
 	::clock_gettime(CLOCK_MONOTONIC, &now);
 
-	unsigned long long nowMS = now.tv_sec * 1000ULL + now.tv_nsec / 1000000ULL;
+	unsigned long long nowMicroSec = now.tv_sec * 1000000ULL + now.tv_nsec / 1000ULL;
 
-	return nowMS - m_startMS;
+	return nowMicroSec - m_startMicroSec;
+}
+
+unsigned int CStopWatch::elapsedMilliSeconds()
+{
+	return elapsed() / 1000U;
 }
 
 #endif
