@@ -82,15 +82,15 @@ void CFMParrot::run()
 
 		unsigned int len = network.read(buffer, 200U);
 		if (len > 0U) {
-			parrot.write(buffer, len);
-			watchdogTimer.start();
-
-			if (len >= 3 && ::memcmp(buffer, "FME", 3U)) {
+			if (len >= 3 && ::memcmp(buffer, "FME", 3U) == 0) {
 				::fprintf(stdout, "Received end of transmission\n");
 				turnaroundTimer.start();
 				watchdogTimer.stop();
 				parrot.end();
-			}
+			} else {
+				parrot.write(buffer, len);
+				watchdogTimer.start();
+			}			
 		}
 
 		if (turnaroundTimer.isRunning() && turnaroundTimer.hasExpired()) {
@@ -98,16 +98,19 @@ void CFMParrot::run()
 				playoutTimer.start();
 				playing = true;
 				count = 0U;
+				::fprintf(stdout, "Started\n");
 			}
 
-			// A frame every 105Ums
-			unsigned int wanted = playoutTimer.elapsed() / 105U;
+			// A frame every 10.5ms
+			unsigned int wanted = playoutTimer.elapsed()  / 10500;
 			while (count < wanted) {
 				len = parrot.read(buffer);
 				if (len > 0U) {
 					network.write(buffer, len);
-					count++;
+					//::fprintf(stdout, "Count %d, Wanted %d\n", count, wanted);
+					count ++ ;
 				} else {
+					::fprintf(stdout, "Finished\n");
 					parrot.clear();
 					network.end();
 					turnaroundTimer.stop();
@@ -117,7 +120,7 @@ void CFMParrot::run()
 			}
 		}
 
-		unsigned int ms = stopWatch.elapsed();
+		unsigned int ms = stopWatch.elapsedMilliSeconds();
 		stopWatch.start();
 
 		watchdogTimer.clock(ms);
