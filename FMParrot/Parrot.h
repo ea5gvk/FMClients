@@ -25,7 +25,7 @@ public:
 	CParrot(unsigned int timeout);
 	~CParrot();
 
-	bool write(const unsigned char* data, unsigned int length);
+	bool write(const unsigned char* data, unsigned short length);
 
 	unsigned int read(unsigned char* data);
 

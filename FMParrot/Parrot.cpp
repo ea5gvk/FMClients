@@ -38,16 +38,16 @@ CParrot::~CParrot()
 	delete[] m_data;
 }
 
-bool CParrot::write(const unsigned char* data, unsigned int length)
+bool CParrot::write(const unsigned char* data, unsigned short length)
 {
 	assert(data != NULL);
 
 	if ((m_length - m_used) < (length + 2U))
 		return false;
 
-	m_data[m_used] = length;
-	::memcpy(m_data + m_used + 1U, data, length);
-	m_used += length + 1U;
+	*((unsigned short*)(m_data + m_used)) = length;
+	::memcpy(m_data + m_used + sizeof(unsigned short), data, length);
+	m_used += length + sizeof(unsigned short);
 
 	return true;
 }
@@ -70,9 +70,9 @@ unsigned int CParrot::read(unsigned char* data)
 	if (m_used == 0U)
 		return 0U;
 
-	unsigned int length = m_data[m_ptr];
-	::memcpy(data, m_data + m_ptr + 1U, length);
-	m_ptr += length + 1U;
+	unsigned short length = *((unsigned short*)(m_data + m_ptr));
+	::memcpy(data, m_data + m_ptr + sizeof(unsigned short), length);
+	m_ptr += length + sizeof(unsigned short);
 
 	if (m_ptr >= m_used)
 		m_used = 0U;
