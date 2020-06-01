@@ -78,9 +78,9 @@ void CFMParrot::run()
 	::fprintf(stdout, "Starting FMParrot-%s\n", VERSION);
 
 	for (;;) {
-		unsigned char buffer[200U];
+		unsigned char buffer[339U];
 
-		unsigned int len = network.read(buffer, 200U);
+		unsigned int len = network.read(buffer, 339U);
 		if (len > 0U) {
 			if (len >= 3 && ::memcmp(buffer, "FME", 3U) == 0) {
 				::fprintf(stdout, "Received end of transmission\n");
@@ -101,8 +101,8 @@ void CFMParrot::run()
 				::fprintf(stdout, "Started\n");
 			}
 
-			// A frame every 10.5ms
-			unsigned int wanted = playoutTimer.elapsed()  / 10500;
+			// A frame every 21 ms
+			unsigned int wanted = playoutTimer.elapsed()  / 21000;
 			while (count < wanted) {
 				len = parrot.read(buffer);
 				if (len > 0U) {
