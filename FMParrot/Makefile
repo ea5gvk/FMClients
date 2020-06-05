@@ -4,7 +4,7 @@ CFLAGS  = -g -O3 -Wall -std=c++0x -pthread
 LIBS    = -lpthread
 LDFLAGS = -g
 
-OBJECTS = FMParrot.o Parrot.o StopWatch.o Thread.o Timer.o
+OBJECTS = FMParrot.o Parrot.o Thread.o Timer.o
 
 .PHONY: all
 all:		FMParrot
