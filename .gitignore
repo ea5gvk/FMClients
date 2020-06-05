@@ -16,3 +16,5 @@ FMParrot/FMParrot
 .vs
 Common/Common.a
 *.d
+FM2DStar/GitVersion.h
+FM2DStar/FM2DStar
