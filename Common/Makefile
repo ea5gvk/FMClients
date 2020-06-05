@@ -1,4 +1,4 @@
-OBJECTS = FMNetwork.o UDPSocket.o
+OBJECTS = FMNetwork.o Log.o UDPSocket.o
 
 .PHONY:		all
 all:		Common.a
