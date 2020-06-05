@@ -4,15 +4,28 @@ CFLAGS  = -g -O3 -Wall -std=c++0x -pthread
 LIBS    = -lpthread
 LDFLAGS = -g
 
-OBJECTS = FMNetwork.o FMParrot.o Parrot.o StopWatch.o Thread.o Timer.o UDPSocket.o
+OBJECTS = FMParrot.o Parrot.o StopWatch.o Thread.o Timer.o
 
+-include $(OBJECTS:.o=.d)
+
+.PHONY: all
 all:		FMParrot
 
-FMParrot:	$(OBJECTS)
-		$(CXX) $(OBJECTS) $(CFLAGS) $(LIBS) -o FMParrot
+FMParrot: ../Common/Common.a force	$(OBJECTS)
+	$(CXX) $(OBJECTS) ../Common/Common.a $(CFLAGS) $(LIBS) -o FMParrot
 
 %.o: %.cpp
-		$(CXX) $(CFLAGS) -c -o $@ $<
+	$(CXX) $(CFLAGS) -I../Common -c -o $@ $<
+	$(CXX) -MM $(CFLAGS) -I../Common $< > $*.d
 
+.PHONY: clean
 clean:
-		$(RM) FMParrot *.o *.d *.bak *~
+	$(RM) FMParrot *.o *.d *.bak *~
+	$(MAKE) -C ../Common clean
+
+../Common/Common.a: force
+	$(MAKE) -C ../Common
+
+.PHONY: force
+force :
+	@true

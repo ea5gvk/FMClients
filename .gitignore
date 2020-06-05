@@ -14,3 +14,5 @@ FMParrot/FMParrot
 *.user
 *.VC.db
 .vs
+Common/Common.a
+*.d
