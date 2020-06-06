@@ -31,7 +31,24 @@ public :
     int run();
 
 private :
+    int dropRoot();
+    void readParams();
+
     CConf m_conf;
+
+    std::string m_callsign;
+    std::string m_suffix;
+    bool m_daemon;
+
+    unsigned int m_logDisplayLevel;
+    unsigned int m_logFileLevel;
+    std::string  m_logFilePath;
+    std::string  m_logFileRoot;
+
+    std::string m_hostAdress;
+    unsigned int m_hostPort;
+    std::string m_localAddress;
+    unsigned int m_localPort;
 };
 
 #endif

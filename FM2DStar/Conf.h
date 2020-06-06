@@ -31,19 +31,42 @@ public:
 
   bool read();
 
+  // The General section
+  std::string  getCallsign() const;
+  std::string  getSuffix() const;
+  bool         getDaemon() const;
+
   // The Log section
   unsigned int getLogDisplayLevel() const;
   unsigned int getLogFileLevel() const;
   std::string  getLogFilePath() const;
   std::string  getLogFileRoot() const;
 
+  // The Network section
+  std::string getHostAddress() const;
+  unsigned int getHostPort() const;
+  std::string getLocalAddress() const;
+  unsigned int getLocalPort() const;
+
 private:
   std::string m_file;
 
+  // The General section
+  std::string m_callsign;
+  std::string m_suffix;
+  bool m_daemon;
+
+  // The Log section
   unsigned int m_logDisplayLevel;
   unsigned int m_logFileLevel;
   std::string  m_logFilePath;
   std::string  m_logFileRoot;
+
+  // The network section
+  std::string m_hostAdress;
+  unsigned int m_hostPort;
+  std::string m_localAddress;
+  unsigned int m_localPort;
 };
 
 #endif

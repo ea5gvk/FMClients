@@ -26,19 +26,33 @@
 #include <cstring>
 #include <cctype>
 
+#define MAKE_UPPER(s) for(unsigned int i = 0U; s[i] != 0; i++) s[i] = ::toupper(s[i]);
+
 const int BUFFER_SIZE = 500;
 
 enum SECTION {
 	SECTION_NONE,
+	SECTION_GENERAL,
 	SECTION_LOG,
+	SECTION_NETWORK
 };
 
 CConf::CConf(const std::string& file) :
 m_file(file),
+// General Section
+m_callsign(),
+m_suffix(),
+m_daemon(false),
+// Log Section
 m_logDisplayLevel(0U),
 m_logFileLevel(0U),
-m_logFilePath(),
-m_logFileRoot()
+m_logFilePath("."),
+m_logFileRoot("FM2DStar"),
+// Network Section
+m_hostAdress("127.0.0.1"),
+m_hostPort(3810U),
+m_localAddress("127.0.0.1"),
+m_localPort(4810U)
 {
 }
 
@@ -62,8 +76,12 @@ bool CConf::read()
 			continue;
 
 		if (buffer[0U] == '[') {
-			if (::strncmp(buffer, "[Log]", 5U) == 0)
+			if (::strncmp(buffer, "[General]", 9U) == 0)
+				section = SECTION_GENERAL;
+			else if (::strncmp(buffer, "[Log]", 5U) == 0)
 				section = SECTION_LOG;
+			else if (::strncmp(buffer, "[Network]", 9U) == 0)
+				section = SECTION_NETWORK;
 			else
 				section = SECTION_NONE;
 
@@ -85,7 +103,16 @@ bool CConf::read()
 			value++;
 		}
 
-		if (section == SECTION_LOG) {
+		if (section == SECTION_GENERAL) {
+			if (::strcmp(key, "Callsign") == 0) {
+				MAKE_UPPER(value);
+				m_callsign = value;
+			} else if(::strcmp(key, "Suffix") == 0) {
+				MAKE_UPPER(value);
+				m_suffix = value;
+			} else if(::strcmp(key, "Daemon") == 0)
+				m_daemon = !!::atoi(value);
+		} else if (section == SECTION_LOG) {
 			if (::strcmp(key, "FilePath") == 0)
 				m_logFilePath = value;
 			else if (::strcmp(key, "FileRoot") == 0)
@@ -94,13 +121,39 @@ bool CConf::read()
 				m_logFileLevel = (unsigned int)::atoi(value);
 			else if (::strcmp(key, "DisplayLevel") == 0)
 				m_logDisplayLevel = (unsigned int)::atoi(value);
-		} 
+		} else if (section == SECTION_NETWORK) {
+			if (::strcmp(key, "MMDVMHostAddress") == 0)
+				m_hostAdress = value;
+			else if (::strcmp(key, "MMDVMHostPort") == 0)
+				m_hostPort = ::atoi(value);
+			else if (::strcmp(key, "LocalAddress") == 0)
+				m_localAddress = value;
+			else if (::strcmp(key, "LocalPort") == 0)
+				m_localPort = ::atoi(value);
+		}
 	}
 	::fclose(fp);
 
 	return true;
 }
 
+// General Section
+std::string  CConf::getCallsign() const
+{
+	return m_callsign;
+}
+
+std::string  CConf::getSuffix() const
+{
+	return m_suffix;
+}
+
+bool CConf::getDaemon() const
+{
+	return m_daemon;
+}
+
+// Log Section
 unsigned int CConf::getLogDisplayLevel() const
 {
 	return m_logDisplayLevel;
@@ -119,5 +172,23 @@ std::string CConf::getLogFilePath() const
 std::string CConf::getLogFileRoot() const
 {
 	return m_logFileRoot;
+}
+
+// Network section
+std::string CConf::getHostAddress() const
+{
+	return m_hostAdress;
+}
+unsigned int CConf::getHostPort() const
+{
+	return m_hostPort;
+}
+std::string CConf::getLocalAddress() const
+{
+	return m_localAddress;
+}
+unsigned int CConf::getLocalPort() const
+{
+	return m_localPort;
 }
 
