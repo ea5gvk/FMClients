@@ -1,6 +1,6 @@
 CC      = gcc
 CXX     = g++
-CFLAGS  = -g -O3 -Wall -std=c++0x -pthread
+CFLAGS  = -g -O3-Wall -std=c++0x -pthread
 LIBS    = -lpthread
 LDFLAGS = -g
 
@@ -27,7 +27,7 @@ clean:
 
 # Export the current git version if the index file exists, else 000...
 GitVersion.h:
-ifneq ("$(wildcard .git/index)","")
+ifneq ("$(wildcard ../.git/)","")
 	echo "const char *gitversion = \"$(shell git rev-parse HEAD)\";" > $@
 else
 	echo "const char *gitversion = \"0000000000000000000000000000000000000000\";" > $@
