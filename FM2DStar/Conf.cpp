@@ -85,6 +85,8 @@ bool CConf::read()
 				section = SECTION_LOG;
 			else if (::strncmp(buffer, "[Network]", 9U) == 0)
 				section = SECTION_NETWORK;
+			else if (::strncmp(buffer, "[DummyRepeater]", 15U) == 0)
+				section = SECTION_DUMMYREPEATER;
 			else
 				section = SECTION_NONE;
 
