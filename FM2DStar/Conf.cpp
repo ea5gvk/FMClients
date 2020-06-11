@@ -34,7 +34,8 @@ enum SECTION {
 	SECTION_NONE,
 	SECTION_GENERAL,
 	SECTION_LOG,
-	SECTION_NETWORK
+	SECTION_NETWORK,
+	SECTION_DUMMYREPEATER
 };
 
 CConf::CConf(const std::string& file) :
@@ -52,7 +53,9 @@ m_logFileRoot("FM2DStar"),
 m_hostAdress("127.0.0.1"),
 m_hostPort(3810U),
 m_localAddress("127.0.0.1"),
-m_localPort(4810U)
+m_localPort(4810U),
+m_dummyRptrCallsign(),
+m_dummyRptrBand("B")
 {
 }
 
@@ -106,7 +109,7 @@ bool CConf::read()
 		if (section == SECTION_GENERAL) {
 			if (::strcmp(key, "Callsign") == 0) {
 				MAKE_UPPER(value);
-				m_callsign = value;
+				m_callsign = m_dummyRptrCallsign = value;
 			} else if(::strcmp(key, "Suffix") == 0) {
 				MAKE_UPPER(value);
 				m_suffix = value;
@@ -130,6 +133,11 @@ bool CConf::read()
 				m_localAddress = value;
 			else if (::strcmp(key, "LocalPort") == 0)
 				m_localPort = ::atoi(value);
+		} else if (section == SECTION_DUMMYREPEATER) {
+			if (::strcmp(key, "Callsign") == 0)
+				m_dummyRptrCallsign = value;
+			if (::strcmp(key, "Band") == 0 && ::strlen(value) > 1)
+				m_dummyRptrBand = value[0];
 		}
 	}
 	::fclose(fp);
@@ -192,3 +200,13 @@ unsigned int CConf::getLocalPort() const
 	return m_localPort;
 }
 
+// Dummy Repeater
+std::string CConf::getDummyRepeaterCallsign() const
+{
+	return m_dummyRptrCallsign;
+}
+
+std::string CConf::getDummyRepeaterBand() const
+{
+	return m_dummyRptrBand;
+}

@@ -48,6 +48,10 @@ public:
   std::string getLocalAddress() const;
   unsigned int getLocalPort() const;
 
+  // The dummy repeater section
+  std::string getDummyRepeaterCallsign() const;
+  std::string getDummyRepeaterBand() const;
+
 private:
   std::string m_file;
 
@@ -67,6 +71,10 @@ private:
   unsigned int m_hostPort;
   std::string m_localAddress;
   unsigned int m_localPort;
+
+  // The dummy repeater section
+  std::string m_dummyRptrCallsign;
+  std::string m_dummyRptrBand;
 };
 
 #endif
