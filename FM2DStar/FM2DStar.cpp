@@ -121,7 +121,9 @@ m_logFileRoot(),
 m_hostAdress(),
 m_hostPort(0U),
 m_localAddress(),
-m_localPort()
+m_localPort(),
+m_dummyRptrCallsign(),
+m_dummyRptrBand()
 {
 
 }
@@ -135,9 +137,9 @@ int CFM2DStar::run()
 	}
 
 #if !defined(_WIN32) && !defined(_WIN64)
-	ret = ::LogInitialise(m_daemon, m_conf.getLogFilePath(), m_conf.getLogFileRoot(), m_conf.getLogFileLevel(), m_conf.getLogDisplayLevel());
+	ret = LogInitialise(m_daemon, m_conf.getLogFilePath(), m_conf.getLogFileRoot(), m_conf.getLogFileLevel(), m_conf.getLogDisplayLevel());
 #else
-	ret = ::LogInitialise(false, m_conf.getLogFilePath(), m_conf.getLogFileRoot(), m_conf.getLogFileLevel(), m_conf.getLogDisplayLevel());
+	ret = LogInitialise(false, m_conf.getLogFilePath(), m_conf.getLogFileRoot(), m_conf.getLogFileLevel(), m_conf.getLogDisplayLevel());
 #endif
 	if (!ret) {
 		::fprintf(stderr, "FM2DStar: unable to open the log file\n");
@@ -200,12 +202,38 @@ void CFM2DStar::readParams()
 	m_callsign			= m_conf.getCallsign();
 	m_suffix			= m_conf.getSuffix();
 	m_daemon			= m_conf.getDaemon();
+
 	m_logDisplayLevel	= m_conf.getLogDisplayLevel();
 	m_logFileLevel		= m_conf.getLogFileLevel();
 	m_logFilePath		= m_conf.getLogFilePath();
 	m_logFileRoot		= m_conf.getLogFileRoot();
+
 	m_hostAdress		= m_conf.getHostAddress();
 	m_hostPort			= m_conf.getHostPort();
 	m_localAddress		= m_conf.getLocalAddress();
 	m_localPort			= m_conf.getLocalPort();
+
+	m_dummyRptrCallsign = m_conf.getDummyRepeaterCallsign();
+	m_dummyRptrBand		= m_conf.getDummyRepeaterBand();
+
+	LogInfo("General");
+	LogInfo("    Callsign:    ", m_callsign.c_str());
+	LogInfo("    Suffix:    ", m_suffix.c_str());
+	LogInfo("    Daemon:    ", m_daemon);
+
+	LogInfo("Log");
+	LogInfo("    Display Level:    ", m_logDisplayLevel);
+	LogInfo("    File Level:    ", m_logFileLevel);
+	LogInfo("    File Path:    ", m_logFilePath);
+	LogInfo("    File Root:    ", m_logFileRoot);
+
+	LogInfo("Network");
+	LogInfo("    Host Address:    ", m_hostAdress.c_str());
+	LogInfo("    Host Port:    ", m_hostPort);
+	LogInfo("    Local Address:    ", m_localAddress.c_str());
+	LogInfo("    Local Port:    ", m_localPort);
+
+	LogInfo("Dummy Repeater");
+	LogInfo("    Callsign:    ", m_dummyRptrCallsign.c_str());
+	LogInfo("    Band:    ", m_dummyRptrBand.c_str());
 }

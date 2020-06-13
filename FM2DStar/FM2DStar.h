@@ -49,6 +49,9 @@ private :
     unsigned int m_hostPort;
     std::string m_localAddress;
     unsigned int m_localPort;
+
+  std::string m_dummyRptrCallsign;
+  std::string m_dummyRptrBand;
 };
 
 #endif
