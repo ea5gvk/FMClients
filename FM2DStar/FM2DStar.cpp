@@ -217,23 +217,23 @@ void CFM2DStar::readParams()
 	m_dummyRptrBand		= m_conf.getDummyRepeaterBand();
 
 	LogInfo("General");
-	LogInfo("    Callsign:    ", m_callsign.c_str());
-	LogInfo("    Suffix:    ", m_suffix.c_str());
-	LogInfo("    Daemon:    ", m_daemon);
+	LogInfo("    Callsign: %s", m_callsign.c_str());
+	LogInfo("    Suffix: %s", m_suffix.c_str());
+	LogInfo("    Daemon: %u", m_daemon);
 
 	LogInfo("Log");
-	LogInfo("    Display Level:    ", m_logDisplayLevel);
-	LogInfo("    File Level:    ", m_logFileLevel);
-	LogInfo("    File Path:    ", m_logFilePath);
-	LogInfo("    File Root:    ", m_logFileRoot);
+	LogInfo("    Display Level: %u", m_logDisplayLevel);
+	LogInfo("    File Level: %u", m_logFileLevel);
+	LogInfo("    File Path: %s", m_logFilePath.c_str());
+	LogInfo("    File Root: %s", m_logFileRoot.c_str());
 
 	LogInfo("Network");
-	LogInfo("    Host Address:    ", m_hostAdress.c_str());
-	LogInfo("    Host Port:    ", m_hostPort);
-	LogInfo("    Local Address:    ", m_localAddress.c_str());
-	LogInfo("    Local Port:    ", m_localPort);
+	LogInfo("    Host Address: %s", m_hostAdress.c_str());
+	LogInfo("    Host Port: %u", m_hostPort);
+	LogInfo("    Local Address: %s", m_localAddress.c_str());
+	LogInfo("    Local Port: %u", m_localPort);
 
 	LogInfo("Dummy Repeater");
-	LogInfo("    Callsign:    ", m_dummyRptrCallsign.c_str());
-	LogInfo("    Band:    ", m_dummyRptrBand.c_str());
+	LogInfo("    Callsign: %s", m_dummyRptrCallsign.c_str());
+	LogInfo("    Band: %s", m_dummyRptrBand.c_str());
 }
