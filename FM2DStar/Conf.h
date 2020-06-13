@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include "FM2DStarDefines.h"
+
 class CConf
 {
 public:
@@ -52,6 +54,12 @@ public:
   std::string getDummyRepeaterCallsign() const;
   std::string getDummyRepeaterBand() const;
 
+  // The Dongle section
+  DONGLE_TYPE getDongleType() const;
+  std::string getDongleAddress() const;
+  unsigned int getDonglePort() const;
+  std::string getDongleSerialPort() const;
+
 private:
   std::string m_file;
 
@@ -67,14 +75,20 @@ private:
   std::string  m_logFileRoot;
 
   // The network section
-  std::string m_hostAdress;
+  std::string  m_hostAdress;
   unsigned int m_hostPort;
-  std::string m_localAddress;
+  std::string  m_localAddress;
   unsigned int m_localPort;
 
   // The dummy repeater section
   std::string m_dummyRptrCallsign;
   std::string m_dummyRptrBand;
+
+  // The Dongle section
+  DONGLE_TYPE  m_dongleType;
+  std::string  m_dongleAddress;
+  unsigned int m_donglePort;
+  std::string  m_dongleSerialPort;
 };
 
 #endif

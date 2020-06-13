@@ -216,6 +216,11 @@ void CFM2DStar::readParams()
 	m_dummyRptrCallsign = m_conf.getDummyRepeaterCallsign();
 	m_dummyRptrBand		= m_conf.getDummyRepeaterBand();
 
+	m_dongleType		= m_conf.getDongleType();
+	m_dongleAddress		= m_conf.getDongleAddress();
+	m_donglePort		= m_conf.getDonglePort();
+	m_dongleSerialPort	= m_conf.getDongleSerialPort();
+
 	LogInfo("General");
 	LogInfo("    Callsign: %s", m_callsign.c_str());
 	LogInfo("    Suffix: %s", m_suffix.c_str());
@@ -236,4 +241,10 @@ void CFM2DStar::readParams()
 	LogInfo("Dummy Repeater");
 	LogInfo("    Callsign: %s", m_dummyRptrCallsign.c_str());
 	LogInfo("    Band: %s", m_dummyRptrBand.c_str());
+
+	LogInfo("Dongle");
+	LogInfo("    Type: %u", m_dongleType + 1U);
+	LogInfo("    Address: %s", m_dongleAddress.c_str());
+	LogInfo("    Port: %u", m_donglePort);
+	LogInfo("    Serial Port: %s", m_dongleSerialPort.c_str());
 }

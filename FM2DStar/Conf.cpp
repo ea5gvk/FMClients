@@ -35,7 +35,8 @@ enum SECTION {
 	SECTION_GENERAL,
 	SECTION_LOG,
 	SECTION_NETWORK,
-	SECTION_DUMMYREPEATER
+	SECTION_DUMMYREPEATER,
+	SECTION_DONGLE
 };
 
 CConf::CConf(const std::string& file) :
@@ -55,7 +56,12 @@ m_hostPort(3810U),
 m_localAddress("127.0.0.1"),
 m_localPort(4810U),
 m_dummyRptrCallsign(),
-m_dummyRptrBand("B")
+m_dummyRptrBand("B"),
+//dongle section
+m_dongleType(DT_DVDONGLE),
+m_dongleAddress("127.0.0.1"),
+m_donglePort(2460U),
+m_dongleSerialPort("/dev/ttyUSB0")
 {
 }
 
@@ -87,6 +93,8 @@ bool CConf::read()
 				section = SECTION_NETWORK;
 			else if (::strncmp(buffer, "[DummyRepeater]", 15U) == 0)
 				section = SECTION_DUMMYREPEATER;
+			else if (::strncmp(buffer, "[Dongle]", 8U) == 0)
+				section = SECTION_DONGLE;
 			else
 				section = SECTION_NONE;
 
@@ -138,8 +146,40 @@ bool CConf::read()
 		} else if (section == SECTION_DUMMYREPEATER) {
 			if (::strcmp(key, "Callsign") == 0)
 				m_dummyRptrCallsign = value;
-			if (::strcmp(key, "Band") == 0 && ::strlen(value) > 1)
+			else if (::strcmp(key, "Band") == 0 && ::strlen(value) > 1)
 				m_dummyRptrBand = value[0];
+		} else if (section == SECTION_DONGLE) {
+			if (::strcmp(key, "DongleType") == 0) {
+				switch (::atoi(value))
+				{
+				case 1:
+					m_dongleType = DT_DVDONGLE;
+					break;
+				case 2:
+					m_dongleType = DT_DV3000_NETWORK;
+					break;
+				case 3:
+					m_dongleType = DT_DV3000_SERIAL;
+					break;
+				case 4:
+					m_dongleType = DT_STARDV_NETWORK;
+					break;
+				case 5:
+					m_dongleType = DT_STARDV_NETWORK2;
+					break;
+				case 6:
+					m_dongleType = DT_DVMEGA_AMBE;
+					break;
+				default:
+					m_dongleType = DT_DVDONGLE;
+					break;
+				}
+			} else if (::strcmp(key, "Address") == 0)
+				m_dongleAddress = value;
+			else if (::strcmp(key, "Port") == 0)
+				m_donglePort = ::atoi(value);
+			else if (::strcmp(key, "SerialPort") == 0)
+				m_dongleSerialPort = value;
 		}
 	}
 	::fclose(fp);
@@ -211,4 +251,25 @@ std::string CConf::getDummyRepeaterCallsign() const
 std::string CConf::getDummyRepeaterBand() const
 {
 	return m_dummyRptrBand;
+}
+
+// Dongle
+DONGLE_TYPE CConf::getDongleType() const
+{
+	return m_dongleType;
+}
+
+std::string CConf::getDongleAddress() const
+{
+	return m_dongleAddress;
+}
+
+unsigned int CConf::getDonglePort() const
+{
+	return m_donglePort;
+}
+
+std::string CConf::getDongleSerialPort() const
+{
+	return m_dongleSerialPort;
 }

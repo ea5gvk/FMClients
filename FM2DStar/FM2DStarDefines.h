@@ -17,47 +17,18 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if !defined(FM2DSTAR_H)
-#define FM2DSTAR_H
+#if !defined(FM2DSTARDEFINES_H)
+#define FM2DSTARDEFINES_H
 
-#include "Conf.h"
-#include "FM2DStarDefines.h"
-
-using namespace std;
-
-class CFM2DStar {
-public :
-    CFM2DStar(const string& confFile);
-
-    int run();
-
-private :
-    int dropRoot();
-    void readParams();
-
-    CConf m_conf;
-
-    std::string m_callsign;
-    std::string m_suffix;
-    bool m_daemon;
-
-    unsigned int m_logDisplayLevel;
-    unsigned int m_logFileLevel;
-    std::string  m_logFilePath;
-    std::string  m_logFileRoot;
-
-    std::string  m_hostAdress;
-    unsigned int m_hostPort;
-    std::string  m_localAddress;
-    unsigned int m_localPort;
-
-    std::string m_dummyRptrCallsign;
-    std::string m_dummyRptrBand;
-
-    DONGLE_TYPE  m_dongleType;
-    std::string  m_dongleAddress;
-    unsigned int m_donglePort;
-    std::string  m_dongleSerialPort;
+enum DONGLE_TYPE {
+	DT_DVDONGLE,
+	DT_DV3000_NETWORK,
+	DT_DV3000_SERIAL,
+	DT_STARDV_NETWORK,
+	DT_STARDV_NETWORK2,
+	DT_DVMEGA_AMBE
 };
+
+#define IS_NETWORK_DONGLE(dongle) (dongle == DT_DV3000_NETWORK || dongle == DT_STARDV_NETWORK || dongle == DT_STARDV_NETWORK || dongle == DT_STARDV_NETWORK2)
 
 #endif
