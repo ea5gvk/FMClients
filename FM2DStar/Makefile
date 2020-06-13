@@ -1,8 +1,9 @@
-CC      = gcc
-CXX     = g++
-CFLAGS  = -g -O3 -Wall -std=c++0x -pthread
+CC      = cc
+CXX     = c++
+CFLAGS  = -g -Wall -std=c++0x -pthread
 LIBS    = -lpthread
 LDFLAGS = -g
+export
 
 OBJECTS = Conf.o FM2DStar.o
 
