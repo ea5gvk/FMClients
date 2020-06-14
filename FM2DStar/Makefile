@@ -5,7 +5,7 @@ LIBS    = -lpthread
 LDFLAGS = -g
 export
 
-OBJECTS = Conf.o DongleThread.o DVDongleController.o DVDongleThread.o FIRFilter.o FM2DStar.o SerialDataController.o
+OBJECTS = Conf.o CCITTChecksumReverse.o DongleThread.o DVDongleController.o DVDongleThread.o FIRFilter.o FM2DStar.o HeaderData.o SerialDataController.o
 
 .PHONY: all
 all:		FM2DStar

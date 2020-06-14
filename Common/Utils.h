@@ -19,6 +19,16 @@
 #ifndef Utils_H
 #define Utils_H
 
+#include <string>
+
+// Change short endianness
 #define SWAP_BYTES_16(a) ((((a) >> 8) & 0x00FFU) | (((a) << 8) & 0xFF00U))
+
+//Pad string right (https://www.oreilly.com/library/view/c-cookbook/0596007612/ch04s02.html)
+template<typename T> void pad(std::basic_string<T>& s,  T c, typename std::basic_string<T>::size_type n)
+{
+   if (n > s.length())
+      s.append(n - s.length(), c);
+};
 
 #endif
