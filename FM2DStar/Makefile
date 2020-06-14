@@ -5,7 +5,7 @@ LIBS    = -lpthread
 LDFLAGS = -g
 export
 
-OBJECTS = Conf.o FM2DStar.o
+OBJECTS = Conf.o DongleThread.o FIRFilter.o FM2DStar.o
 
 .PHONY: all
 all:		FM2DStar
