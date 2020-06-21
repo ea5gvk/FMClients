@@ -229,13 +229,13 @@ int CSerialDataController::write(const unsigned char* buffer, unsigned int lengt
 		if (!res) {
 			DWORD error = ::GetLastError();
 			if (error != ERROR_IO_PENDING) {
-				LogError(wxT("Error from WriteFile: %04lx"), error);
+				LogError("Error from WriteFile: %04lx", error);
 				return -1;
 			}
 
 			res = ::GetOverlappedResult(m_handle, &m_writeOverlapped, &bytes, TRUE);
 			if (!res) {
-				LogError(wxT("Error from GetOverlappedResult (WriteFile): %04lx"), ::GetLastError());
+				LogError("Error from GetOverlappedResult (WriteFile): %04lx", ::GetLastError());
 				return -1;
 			}
 		}
