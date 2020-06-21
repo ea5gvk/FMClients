@@ -1,4 +1,4 @@
-OBJECTS = FMNetwork.o Log.o StopWatch.o Thread.o UDPSocket.o
+OBJECTS = FMNetwork.o Log.o StopWatch.o Thread.o Timer.o UDPReaderWriter.o UDPSocket.o UDPReaderWriter.o
 
 .PHONY:		all
 all:		Common.a

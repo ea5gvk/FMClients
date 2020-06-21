@@ -5,7 +5,7 @@ LIBS    = -lpthread
 LDFLAGS = -g
 export
 
-OBJECTS = FMParrot.o Parrot.o Thread.o Timer.o
+OBJECTS = FMParrot.o Parrot.o Thread.o
 
 .PHONY: all
 all:		FMParrot
