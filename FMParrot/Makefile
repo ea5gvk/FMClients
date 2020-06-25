@@ -14,5 +14,8 @@ FMParrot:	$(OBJECTS)
 %.o: %.cpp
 		$(CXX) $(CFLAGS) -c -o $@ $<
 
+install:
+		install -m 755 FMParrot /usr/local/bin/
+
 clean:
 		$(RM) FMParrot *.o *.d *.bak *~
