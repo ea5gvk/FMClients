@@ -59,7 +59,7 @@ CFMFileReader::~CFMFileReader()
 
 void CFMFileReader::run()
 {
-	CWAVFileReader reader(m_filename, 300U);
+	CWAVFileReader reader(m_filename, 200U);
 
 	bool ret = reader.open();
 	if (!ret)
@@ -88,7 +88,6 @@ void CFMFileReader::run()
 
 	CStopWatch playoutTimer;
 	unsigned int count = 0U;
-	bool playing = false;
 
 	::fprintf(stdout, "Starting FMFileReader-%s\n", VERSION);
 
@@ -100,10 +99,10 @@ void CFMFileReader::run()
 		// A frame every 21 ms
 		unsigned int wanted = playoutTimer.elapsed()  / 21000U;
 		while (count < wanted) {
-			float audio[300U];
-			unsigned int len = reader.read(audio, 300U);
+			float audio[200U];
+			unsigned int len = reader.read(audio, 168U);
 			if (len > 0U) {
-				unsigned short buffer[300U];
+				unsigned short buffer[200U];
 				for (unsigned int i = 0U; i < len; i++)
 					buffer[i] = (unsigned short)((audio[i] + 1.0F) * 32767.0F);
 				network.write((unsigned char*)buffer, len * 2U);
