@@ -22,12 +22,12 @@
 
 CStopWatch::CStopWatch() :
 m_frequencyS(),
-m_frequencyMS(),
+m_frequencyMicroS(),
 m_start()
 {
 	::QueryPerformanceFrequency(&m_frequencyS);
 
-	m_frequencyMS.QuadPart = m_frequencyS.QuadPart;
+	m_frequencyMicroS.QuadPart = m_frequencyS.QuadPart;
 }
 
 CStopWatch::~CStopWatch()
