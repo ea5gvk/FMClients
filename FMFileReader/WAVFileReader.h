@@ -25,7 +25,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #else
-#include <wx/ffile.h>
+#include <cstdio>
 #endif
 
 enum WAVFORMAT {
@@ -64,8 +64,8 @@ private:
 	MMCKINFO       m_child;
 	LONG           m_offset;
 #else
-	wxFFile* m_file;
-	wxFileOffset   m_offset;
+	FILE*          m_file;
+	unsigned long  m_offset;
 	unsigned int   m_length;
 #endif
 };

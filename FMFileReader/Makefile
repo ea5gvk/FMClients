@@ -8,7 +8,7 @@ OBJECTS = FMFileReader.o FMNetwork.o StopWatch.o Thread.o Timer.o UDPSocket.o WA
 
 all:		FMFileReader
 
-FMParrot:	$(OBJECTS)
+FMFileReader:	$(OBJECTS)
 		$(CXX) $(OBJECTS) $(CFLAGS) $(LIBS) -o FMFileReader
 
 %.o: %.cpp

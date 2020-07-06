@@ -18,25 +18,27 @@
 
 #include "WAVFileReader.h"
 
+#include <cstdint>
 #include <cassert>
+#include <cstring>
 
 #if defined(_WIN32) || defined(_WIN64)
 
 const int WAVE_FORMAT_IEEE_FLOAT = 3;
 
 CWAVFileReader::CWAVFileReader(const std::string& fileName, unsigned int blockSize) :
-	m_fileName(fileName),
-	m_blockSize(blockSize),
-	m_format(FORMAT_16BIT),
-	m_channels(0U),
-	m_sampleRate(0U),
-	m_buffer8(NULL),
-	m_buffer16(NULL),
-	m_buffer32(NULL),
-	m_handle(NULL),
-	m_parent(),
-	m_child(),
-	m_offset(0L)
+m_fileName(fileName),
+m_blockSize(blockSize),
+m_format(FORMAT_16BIT),
+m_channels(0U),
+m_sampleRate(0U),
+m_buffer8(NULL),
+m_buffer16(NULL),
+m_buffer32(NULL),
+m_handle(NULL),
+m_parent(),
+m_child(),
+m_offset(0L)
 {
 	assert(blockSize > 0U);
 
@@ -239,17 +241,17 @@ const int FORMAT_PCM = 1;
 const int FORMAT_IEEE_FLOAT = 3;
 
 CWAVFileReader::CWAVFileReader(const std::string& fileName, unsigned int blockSize) :
-	m_fileName(fileName),
-	m_blockSize(blockSize),
-	m_format(FORMAT_16BIT),
-	m_channels(0U),
-	m_sampleRate(0U),
-	m_buffer8(NULL),
-	m_buffer16(NULL),
-	m_buffer32(NULL),
-	m_file(NULL),
-	m_offset(0),
-	m_length(0U)
+m_fileName(fileName),
+m_blockSize(blockSize),
+m_format(FORMAT_16BIT),
+m_channels(0U),
+m_sampleRate(0U),
+m_buffer8(NULL),
+m_buffer16(NULL),
+m_buffer32(NULL),
+m_file(NULL),
+m_offset(0UL),
+m_length(0U)
 {
 	assert(blockSize > 0U);
 
@@ -272,176 +274,167 @@ std::string CWAVFileReader::getFilename() const
 
 bool CWAVFileReader::open()
 {
-	m_file = new wxFFile(m_fileName.c_str(), wxT("rb"));
-
-	bool ret = m_file->IsOpened();
-	if (!ret) {
-		::fprintf(stderr, "WAVFileReader: could not open the WAV file %s."), m_fileName.c_str());
-		delete m_file;
-		m_file = NULL;
+	m_file = ::fopen(m_fileName.c_str(), "rb");
+	if (m_file == NULL) {
+		::fprintf(stderr, "WAVFileReader: could not open the WAV file %s\n", m_fileName.c_str());
 		return false;
 	}
 
 	unsigned char buffer[4];
-	unsigned int n = m_file->Read(buffer, 4);
+	unsigned int n = ::fread(buffer, 1, 4, m_file);
 	if (n != 4U || ::memcmp(buffer, "RIFF", 4) != 0) {
-		::fprintf(stderr, "WAVFileReader: %s has no \"RIFF\" signature."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s has no \"RIFF\" signature\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(buffer, 4);
+	n = ::fread(buffer, 1, 4, m_file);
 	if (n != 4U) {
-		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the file length."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the file length.\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(buffer, 4);
+	n = ::fread(buffer, 1, 4, m_file);
 	if (n != 4U || ::memcmp(buffer, "WAVE", 4) != 0) {
-		::fprintf(stderr, "WAVFileReader: %s has no \"WAVE\" header."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s has no \"WAVE\" header\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(buffer, 4);
+	n = ::fread(buffer, 1, 4, m_file);
 	if (n != 4U || ::memcmp(buffer, "fmt ", 4) != 0) {
-		::fprintf(stderr, "WAVFileReader: %s has no \"fmt \" chunk."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s has no \"fmt \" chunk\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	wxUint32 uint32;
-	n = m_file->Read(&uint32, sizeof(wxUint32));
+	uint32_t uint32;
+	n = ::fread(&uint32, 1, sizeof(uint32_t), m_file);
 
-	wxUint32 length = wxUINT32_SWAP_ON_BE(uint32);
-	if (n != sizeof(wxUint32) || length < 16U) {
-		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the WAVEFORMATEX structure length."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+	// Assume the CPU is little-endian, ARM on the Raspberry Pi, Intel on a PC.
+	// uint32_t length = wxUINT32_SWAP_ON_BE(uint32);
+	uint32_t length = uint32;
+	if (n != sizeof(uint32_t) || length < 16U) {
+		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the WAVEFORMATEX structure length\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
 	uint16_t uint16;
-	n = m_file->Read(&uint16, sizeof(uint16_t));
+	n = ::fread(&uint16, 1, sizeof(uint16_t), m_file);
 
-	uint16_t compCode = uint16_t_SWAP_ON_BE(uint16);
+	// Assume the CPU is little-endian, ARM on the Raspberry Pi, Intel on a PC.
+	// uint16_t compCode = wxUINT16_SWAP_ON_BE(uint16);
+	uint16_t compCode = uint16;
 	if (n != sizeof(uint16_t) || (compCode != FORMAT_PCM && compCode != FORMAT_IEEE_FLOAT)) {
-		::fprintf(stderr, "WAVFileReader: %s is not PCM or IEEE Float format, is %u."), m_fileName.c_str(), compCode);
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s is not PCM or IEEE Float format, is %u\n", m_fileName.c_str(), compCode);
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(&uint16, sizeof(uint16_t));
+	n = ::fread(&uint16, 1, sizeof(uint16_t), m_file);
 
-	m_channels = uint16_t_SWAP_ON_BE(uint16);
+	// Assume the CPU is little-endian, ARM on the Raspberry Pi, Intel on a PC.
+	// m_channels = wxUINT16_SWAP_ON_BE(uint16);
+	m_channels = uint16;
 	if (n != sizeof(uint16_t) || m_channels > 2U) {
-		::fprintf(stderr, "WAVFileReader: %s has %u channels, more than 2."), m_fileName.c_str(), m_channels);
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s has %u channels, more than 2\n", m_fileName.c_str(), m_channels);
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(&uint32, sizeof(wxUint32));
+	n = ::fread(&uint32, 1, sizeof(uint32_t), m_file);
 
-	m_sampleRate = wxUINT32_SWAP_ON_BE(uint32);
-	if (n != sizeof(wxUint32)) {
-		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the sample rate."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+	// Assume the CPU is little-endian, ARM on the Raspberry Pi, Intel on a PC.
+	// m_sampleRate = wxUINT32_SWAP_ON_BE(uint32);
+	m_sampleRate = uint32;
+	if (n != sizeof(uint32_t)) {
+		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the sample rate\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(&uint32, sizeof(wxUint32));
+	n = ::fread(&uint32, 1, sizeof(uint32_t), m_file);
 
-	if (n != sizeof(wxUint32)) {
-		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the average bytes per second"), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+	if (n != sizeof(uint32_t)) {
+		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the average bytes per second\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(&uint16, sizeof(uint16_t));
+	n = ::fread(&uint16, 1, sizeof(uint16_t), m_file);
 
 	if (n != sizeof(uint16_t)) {
-		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the block align."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the block align\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(&uint16, sizeof(uint16_t));
+	n = ::fread(&uint16, 1, sizeof(uint16_t), m_file);
 
 	if (n != sizeof(uint16_t)) {
-		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the bitsPerSample."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the bitsPerSample\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	uint16_t bitsPerSample = uint16_t_SWAP_ON_BE(uint16);
+	// Assume the CPU is little-endian, ARM on the Raspberry Pi, Intel on a PC.
+	// uint16_t bitsPerSample = wxUINT16_SWAP_ON_BE(uint16);
+	uint16_t bitsPerSample = uint16;
 
 	if (bitsPerSample == 8U && compCode == FORMAT_PCM) {
 		m_format = FORMAT_8BIT;
-	}
-	else if (bitsPerSample == 16U && compCode == FORMAT_PCM) {
+	} else if (bitsPerSample == 16U && compCode == FORMAT_PCM) {
 		m_format = FORMAT_16BIT;
-	}
-	else if (bitsPerSample == 32U && compCode == FORMAT_IEEE_FLOAT) {
+	} else if (bitsPerSample == 32U && compCode == FORMAT_IEEE_FLOAT) {
 		m_format = FORMAT_32BIT;
-	}
-	else {
-		::fprintf(stderr, "WAVFileReader: %s has sample width %u and format %u."), m_fileName.c_str(), bitsPerSample, compCode);
-		m_file->Close();
-		delete m_file;
+	} else {
+		::fprintf(stderr, "WAVFileReader: %s has sample width %u and format %u\n", m_fileName.c_str(), bitsPerSample, compCode);
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
 	// Now drain any extra bytes of data
 	if (length > 16U)
-		m_file->Seek(length - 16U, wxFromCurrent);
+		::fseek(m_file, length - 16U, SEEK_CUR);
 
-	n = m_file->Read(buffer, 4);
+	n = ::fread(buffer, 1, 4, m_file);
 
 	if (n != 4U || ::memcmp(buffer, "data", 4) != 0) {
-		::fprintf(stderr, "WAVFileReader: %s has no \"data\" chunk."), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+		::fprintf(stderr, "WAVFileReader: %s has no \"data\" chunk\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	n = m_file->Read(&uint32, sizeof(wxUint32));
+	n = ::fread(&uint32, 1, sizeof(uint32_t), m_file);
 
-	if (n != sizeof(wxUint32)) {
-		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the \"data\" chunk size"), m_fileName.c_str());
-		m_file->Close();
-		delete m_file;
+	if (n != sizeof(uint32_t)) {
+		::fprintf(stderr, "WAVFileReader: %s is corrupt, cannot read the \"data\" chunk size\n", m_fileName.c_str());
+		::fclose(m_file);
 		m_file = NULL;
 		return false;
 	}
 
-	m_length = wxUINT32_SWAP_ON_BE(uint32);
+	// Assume the CPU is little-endian, ARM on the Raspberry Pi, Intel on a PC.
+	// m_length = wxUINT32_SWAP_ON_BE(uint32);
+	m_length = uint32;
 
 	// Get the current location so we can rewind if needed
-	m_offset = m_file->Tell();
+	m_offset = ::ftell(m_file);
 
 	return true;
 }
@@ -457,8 +450,7 @@ unsigned int CWAVFileReader::read(float* data, unsigned int length)
 
 	switch (m_format) {
 	case FORMAT_8BIT:
-		n = m_file->Read(m_buffer8, length * m_channels * sizeof(uint8_t));
-
+		n = ::fread(m_buffer8, 1, length * m_channels * sizeof(uint8_t), m_file);
 		if (n == 0U)
 			return 0U;
 
@@ -471,8 +463,7 @@ unsigned int CWAVFileReader::read(float* data, unsigned int length)
 		break;
 
 	case FORMAT_16BIT:
-		n = m_file->Read(m_buffer16, length * m_channels * sizeof(int16_t));
-
+		n = ::fread(m_buffer16, 1, length * m_channels * sizeof(int16_t), m_file);
 		if (n == 0U)
 			return 0U;
 
@@ -485,8 +476,7 @@ unsigned int CWAVFileReader::read(float* data, unsigned int length)
 		break;
 
 	case FORMAT_32BIT:
-		n = m_file->Read(m_buffer32, length * m_channels * sizeof(float));
-
+		n = ::fread(m_buffer32, 1, length * m_channels * sizeof(float), m_file);
 		if (n == 0U)
 			return 0U;
 
@@ -498,10 +488,9 @@ unsigned int CWAVFileReader::read(float* data, unsigned int length)
 				data[i] = m_buffer32[i];
 			break;
 		case 2U:
-			// Swap I and Q for SDR-1000 data
 			for (i = 0U; i < n; i++) {
-				data[i * 2U + 0U] = m_buffer32[i * 2U + 1U];
-				data[i * 2U + 1U] = m_buffer32[i * 2U + 0U];
+				data[i * 2U + 0U] = m_buffer32[i * 2U + 0U];
+				data[i * 2U + 1U] = m_buffer32[i * 2U + 1U];
 			}
 			break;
 		}
@@ -515,17 +504,14 @@ void CWAVFileReader::rewind()
 {
 	assert(m_file != NULL);
 
-	m_file->Seek(m_offset);
+	::fseek(m_file, m_offset, SEEK_SET);
 }
 
 void CWAVFileReader::close()
 {
 	assert(m_file != NULL);
 
-	m_file->Close();
-
-	delete m_file;
-
+	::fclose(m_file);
 	m_file = NULL;
 }
 
