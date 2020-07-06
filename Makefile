@@ -1,4 +1,4 @@
-SUBDIRS = FMParrot
+SUBDIRS = FMFileReader FMParrot
 CLEANDIRS = $(SUBDIRS:%=clean-%)
 INSTALLDIRS = $(SUBDIRS:%=install-%)
 
