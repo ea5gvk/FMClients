@@ -63,6 +63,12 @@ public:
 		m_timer = 0U;
 	}
 
+	void reset()
+	{
+		if (m_timer > 0U)
+			m_timer = 1U;
+	}
+
 	bool hasExpired()
 	{
 		if (m_timeout == 0U || m_timer == 0U)

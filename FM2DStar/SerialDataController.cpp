@@ -40,7 +40,7 @@ m_readBuffer(NULL),
 m_readLength(0U),
 m_readPending(false)
 {
-	assert(!device.IsEmpty());
+	assert(!device.empty());
 
 	m_readBuffer = new unsigned char[BUFFER_LENGTH];
 }
@@ -56,7 +56,7 @@ bool CSerialDataController::open()
 
 	DWORD errCode;
 
-	wxString baseName = m_device.Mid(4U);		// Convert "\\.\COM10" to "COM10"
+	std::string baseName = m_device.Mid(4U);		// Convert "\\.\COM10" to "COM10"
 
 	m_handle = ::CreateFile(m_device.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
 	if (m_handle == INVALID_HANDLE_VALUE) {

@@ -56,7 +56,7 @@ DWORD CThread::helper(LPVOID arg)
 
 void CThread::sleep(unsigned int ms)
 {
-	::Sleep(ms);
+	::sleep(ms);
 }
 
 #else

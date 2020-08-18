@@ -123,7 +123,8 @@ m_hostPort(0U),
 m_localAddress(),
 m_localPort(),
 m_dummyRptrCallsign(),
-m_dummyRptrBand()
+m_dummyRptrBand(),
+m_thread(NULL)
 {
 
 }
@@ -159,6 +160,18 @@ int CFM2DStar::run()
 		return 1;
 
 	readParams();
+
+	
+
+	m_thread = new CDummyRepeaterThread();
+
+	m_thread->setMessage("");
+	m_thread->setCallsign(m_callsign, m_suffix);
+	m_thread->setRpt1(m_dummyRptrCallsign, m_dummyRptrBand);
+	m_thread->setRpt2(m_dummyRptrCallsign, "G");
+
+	// if(!m_thread->run())
+
 
 	return 0;
 }

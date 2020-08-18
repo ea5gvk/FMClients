@@ -22,6 +22,7 @@
 
 #include "Conf.h"
 #include "FM2DStarDefines.h"
+#include "DummyRepeaterThread.h"
 
 using namespace std;
 
@@ -58,6 +59,8 @@ private :
     std::string  m_dongleAddress;
     unsigned int m_donglePort;
     std::string  m_dongleSerialPort;
+
+    CDummyRepeaterThread * m_thread;
 };
 
 #endif

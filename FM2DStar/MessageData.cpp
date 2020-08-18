@@ -1,6 +1,5 @@
 /*
- *   Copyright (C) 2015-2020 by Jonathan Naylor G4KLX
- *   Copyright (C) 2020 by Geoffrey Merck F4FXL - KC3FRA
+ *   Copyright (C) 2009,2011,2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,24 +16,34 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if !defined(FM2DSTARDEFINES_H)
-#define FM2DSTARDEFINES_H
+#include "MessageData.h"
 
-#include <string>
+#include <cassert>
 
-enum DONGLE_TYPE {
-	DT_DVDONGLE,
-	DT_DV3000_NETWORK,
-	DT_DV3000_SERIAL,
-	DT_STARDV_NETWORK,
-	DT_STARDV_NETWORK2,
-	DT_DVMEGA_AMBE
-};
+CMessageData::CMessageData(const CMessageData& message) :
+m_text(message.m_text)
+{
+}
 
-#define IS_NETWORK_DONGLE(dongle) (dongle == DT_DV3000_NETWORK || dongle == DT_STARDV_NETWORK || dongle == DT_STARDV_NETWORK || dongle == DT_STARDV_NETWORK2)
+CMessageData::CMessageData(const unsigned char* text, unsigned int length) :
+m_text()
+{
+	assert(text != NULL);
+	assert(length > 0U);
 
-const std::string CQCQCQ = "CQCQCQ";
-const std::string DIRECT = "DIRECT  ";
-const std::string UNUSED = "<unused>";
+	m_text = std::string((const char*)text, length);
+}
 
-#endif
+CMessageData::CMessageData(const std::string& text) :
+m_text(text)
+{
+}
+
+CMessageData::~CMessageData()
+{
+}
+
+std::string CMessageData::getText() const
+{
+	return m_text;
+}

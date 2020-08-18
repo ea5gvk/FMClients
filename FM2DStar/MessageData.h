@@ -1,6 +1,5 @@
 /*
- *   Copyright (C) 2015-2020 by Jonathan Naylor G4KLX
- *   Copyright (C) 2020 by Geoffrey Merck F4FXL - KC3FRA
+ *   Copyright (C) 2009,2010,2011,2014 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,24 +16,22 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#if !defined(FM2DSTARDEFINES_H)
-#define FM2DSTARDEFINES_H
+#ifndef	MessageData_H
+#define	MessageData_H
 
 #include <string>
 
-enum DONGLE_TYPE {
-	DT_DVDONGLE,
-	DT_DV3000_NETWORK,
-	DT_DV3000_SERIAL,
-	DT_STARDV_NETWORK,
-	DT_STARDV_NETWORK2,
-	DT_DVMEGA_AMBE
+class CMessageData {
+public:
+	CMessageData(const CMessageData& message);
+	CMessageData(const unsigned char* text, unsigned int length);
+	CMessageData(const std::string& text);
+	~CMessageData();
+
+	std::string getText() const;
+
+private:
+	std::string m_text;
 };
-
-#define IS_NETWORK_DONGLE(dongle) (dongle == DT_DV3000_NETWORK || dongle == DT_STARDV_NETWORK || dongle == DT_STARDV_NETWORK || dongle == DT_STARDV_NETWORK2)
-
-const std::string CQCQCQ = "CQCQCQ";
-const std::string DIRECT = "DIRECT  ";
-const std::string UNUSED = "<unused>";
 
 #endif
