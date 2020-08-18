@@ -34,7 +34,7 @@ public:
 	virtual void setDecode();
 	virtual void setIdle();
 
-	virtual void* Entry();
+	virtual void entry();
 
 private:
 	enum DVDMODE {

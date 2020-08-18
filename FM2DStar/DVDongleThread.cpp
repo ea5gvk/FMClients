@@ -41,7 +41,7 @@ bool CDVDongleThread::open()
 	return m_dongle->open();
 }
 
-void* CDVDongleThread::Entry()
+void CDVDongleThread::entry()
 {
 	m_dongle->start();
 
@@ -74,8 +74,6 @@ void* CDVDongleThread::Entry()
 	m_dongle->stop();
 	m_dongle->close();
 	delete m_dongle;
-
-	return NULL;
 }
 
 void CDVDongleThread::setDecode()

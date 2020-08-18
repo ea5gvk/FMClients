@@ -36,6 +36,8 @@ private :
     int dropRoot();
     void readParams();
 
+    CDongleThread * createDongleThread();
+
     CConf m_conf;
 
     std::string m_callsign;

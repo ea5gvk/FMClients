@@ -21,6 +21,7 @@
 #include "Log.h"
 #include "FM2DStar.h"
 #include "GitVersion.h"
+#include "DVDongleThread.h"
 
 #include <cstdio>
 #include <vector>
@@ -169,11 +170,41 @@ int CFM2DStar::run()
 	m_thread->setCallsign(m_callsign, m_suffix);
 	m_thread->setRpt1(m_dummyRptrCallsign, m_dummyRptrBand);
 	m_thread->setRpt2(m_dummyRptrCallsign, "G");
+	m_thread->setYour("CQCQCQ");
+	
+	CDongleThread * dongleThread = createDongleThread();
+	if (dongleThread == NULL) {
+		LogError("Failed to create dongle");
+		return -1;
+	}
+	m_thread->setDongle(dongleThread);
 
-	// if(!m_thread->run())
-
+	
 
 	return 0;
+}
+
+CDongleThread * CFM2DStar::createDongleThread()
+{
+	CDongleThread * thread = NULL;
+
+	switch (m_dongleType)
+	{
+		case DT_DVDONGLE: {
+			CDVDongleController * controller = new CDVDongleController(m_dongleSerialPort);
+			thread = new CDVDongleThread(controller);
+		}
+		break;
+	
+		default:
+			break;
+	}
+
+	if (thread != NULL && thread->open()) {
+		thread->run();
+	}
+
+	return thread;
 }
 
 int CFM2DStar::dropRoot()
