@@ -24,8 +24,8 @@
 
 CFMNetwork::CFMNetwork(unsigned int port) :
 m_socket(port),
-m_address(),
-m_port(0U)
+m_addr(),
+m_addrLen(0U)
 {
 }
 
@@ -42,24 +42,24 @@ bool CFMNetwork::open()
 
 bool CFMNetwork::write(const unsigned char* data, unsigned int length)
 {
-	if (m_port == 0U)
+	if (m_addrLen == 0U)
 		return true;
 
 	assert(data != NULL);
 
-	return m_socket.write(data, length, m_address, m_port);
+	return m_socket.write(data, length, m_addr, m_addrLen);
 }
 
 unsigned int CFMNetwork::read(unsigned char* data, unsigned int len)
 {
-	in_addr address;
-	unsigned int port;
-	int length = m_socket.read(data, len, address, port);
+	sockaddr_storage addr;
+	unsigned int addrlen;
+	int length = m_socket.read(data, len, addr, addrlen);
 	if (length <= 0)
 		return 0U;
 
-	m_address.s_addr = address.s_addr;
-	m_port = port;
+	m_addr    = addr;
+	m_addrLen = addrlen;
 
 	if (::memcmp(data, "FMP", 3U) == 0) {			// A poll
 		write(data, length);
@@ -73,7 +73,7 @@ unsigned int CFMNetwork::read(unsigned char* data, unsigned int len)
 
 void CFMNetwork::end()
 {
-	m_port = 0U;
+	m_addrLen = 0U;
 }
 
 void CFMNetwork::close()

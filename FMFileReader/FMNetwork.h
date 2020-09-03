@@ -40,9 +40,9 @@ public:
 	void close();
 
 private:
-	CUDPSocket   m_socket;
-	in_addr      m_address;
-	unsigned int m_port;
+	CUDPSocket       m_socket;
+	sockaddr_storage m_addr;
+	unsigned int     m_addrLen;
 };
 
 #endif
