@@ -1,17 +1,21 @@
-.PHONY: all
-all:  FMParrot/FMParrot FM2DStar/FM2DStar
+SUBDIRS = FM2DStar FMFileReader FMParrot
+CLEANDIRS = $(SUBDIRS:%=clean-%)
+INSTALLDIRS = $(SUBDIRS:%=install-%)
 
-FM2DStar/FM2DStar: force
-	$(MAKE) -C FM2DStar
+all: $(SUBDIRS)
 
-FMParrot/FMParrot: force
-	$(MAKE) -C FMParrot
+$(SUBDIRS):
+	$(MAKE) -C $@
 
-.PHONY: clean
-clean:
-	$(MAKE) -C FM2DStar clean
-	$(MAKE) -C FMParrot clean
+clean: $(CLEANDIRS)
 
-.PHONY: force
-force :
-	@true
+$(CLEANDIRS): 
+	$(MAKE) -C $(@:clean-%=%) clean
+
+install: $(INSTALLDIRS)
+
+$(INSTALLDIRS): 
+	$(MAKE) -C $(@:install-%=%) install
+
+.PHONY: $(SUBDIRS) $(CLEANDIRS) $(INSTALLDIRS)
+

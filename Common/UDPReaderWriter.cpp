@@ -33,21 +33,17 @@ m_remotePort(remotePort),
 m_localAddress(localAddress),
 m_localPort(localPort),
 m_remAddr(),
+m_remAddrLen(),
 m_socket(localPort)
 {
 	assert(!remoteAddress.empty());
 	assert(remotePort > 0U);
 
-	m_remAddr = CUDPSocket::lookup(m_remoteAddress);
+	CUDPSocket::lookup(m_remoteAddress, m_remotePort, m_remAddr, m_remAddrLen);
 }
 
 CUDPReaderWriter::~CUDPReaderWriter()
 {
-}
-
-in_addr CUDPReaderWriter::lookup(const std::string& hostname)
-{
-	return CUDPSocket::lookup(hostname);
 }
 
 bool CUDPReaderWriter::open()
@@ -57,13 +53,13 @@ bool CUDPReaderWriter::open()
 
 int CUDPReaderWriter::read(unsigned char* buffer, unsigned int length)
 {
-	in_addr incomingAddress;
-	unsigned int incomingPort;
-	int result = m_socket.read(buffer, length, incomingAddress, incomingPort);
+	sockaddr_storage addr;
+	unsigned int addrlen;
+	int result = m_socket.read(buffer, length, addr, addrlen);
 
-	if(incomingPort != m_remotePort && m_remAddr.s_addr != incomingAddress.s_addr) {
+	if (!CUDPSocket::match(m_remAddr, addr)) {
 		result = 0;
-		LogMessage("Packet received from an invalid source, %08X != %08X and/or %u != %u", m_remAddr.s_addr, incomingAddress.s_addr, m_remotePort, incomingPort);
+		LogMessage("Packet received from an invalid source");
 	}
 
 	return result;
@@ -71,7 +67,7 @@ int CUDPReaderWriter::read(unsigned char* buffer, unsigned int length)
 
 bool CUDPReaderWriter::write(const unsigned char* buffer, unsigned int length)
 {
-	return m_socket.write(buffer, length, m_remAddr, m_remotePort);
+	return m_socket.write(buffer, length, m_remAddr, m_remAddrLen);
 }
 
 void CUDPReaderWriter::close()

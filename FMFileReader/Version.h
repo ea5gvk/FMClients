@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2009-2014,2016,2018 by Jonathan Naylor G4KLX
+ *   Copyright (C) 2015,2016,2018,2020 by Jonathan Naylor G4KLX
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,33 +16,9 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef	FMNetwork_H
-#define	FMNetwork_H
+#if !defined(VERSION_H)
+#define	VERSION_H
 
-#include "UDPSocket.h"
-
-#include <cstdint>
-#include <string>
-
-class CFMNetwork {
-public:
-	CFMNetwork(unsigned int port);
-	~CFMNetwork();
-
-	bool open();
-
-	bool write(const unsigned char* data, unsigned int length);
-
-	unsigned int read(unsigned char* data, unsigned int length);
-
-	void end();
-
-	void close();
-
-private:
-	CUDPSocket       m_socket;
-	sockaddr_storage m_addr;
-	unsigned int     m_addrLen;
-};
+const char* VERSION = "20200903";
 
 #endif

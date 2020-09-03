@@ -39,8 +39,6 @@ public:
 	CUDPReaderWriter(const std::string& remoteAddress, unsigned int remotePort, const std::string& localAddress = "", unsigned int localPort = 0U);
 	~CUDPReaderWriter();
 
-	static in_addr lookup(const std::string& hostName);
-
 	bool open();
 
 	int  read(unsigned char* buffer, unsigned int length);
@@ -49,12 +47,13 @@ public:
 	void close();
 
 private:
-	std::string    m_remoteAddress;
-	unsigned short m_remotePort;
-	std::string    m_localAddress;
-	unsigned short m_localPort;
-	in_addr        m_remAddr;
-	CUDPSocket     m_socket;
+	std::string      m_remoteAddress;
+	unsigned short   m_remotePort;
+	std::string      m_localAddress;
+	unsigned short   m_localPort;
+	sockaddr_storage m_remAddr;
+	unsigned int     m_remAddrLen;
+	CUDPSocket       m_socket;
 };
 
 #endif

@@ -18,7 +18,9 @@ FMParrot: ../Common/Common.a force	$(OBJECTS)
 	$(CXX) $(CFLAGS) -I../Common -c -o $@ $<
 	$(CXX) -MM $(CFLAGS) -I../Common $< > $*.d
 
-.PHONY: clean
+install:
+		install -m 755 FMParrot /usr/local/bin/
+
 clean:
 	$(RM) FMParrot *.o *.d *.bak *~
 	$(MAKE) -C ../Common clean
@@ -29,3 +31,4 @@ clean:
 .PHONY: force
 force :
 	@true
+	
