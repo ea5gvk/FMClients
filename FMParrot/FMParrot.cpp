@@ -51,10 +51,12 @@ int main(int argc, char** argv)
 CFMParrot::CFMParrot(unsigned int port) :
 m_port(port)
 {
+	CUDPSocket::startup();
 }
 
 CFMParrot::~CFMParrot()
 {
+	CUDPSocket::shutdown();
 }
 
 void CFMParrot::run()

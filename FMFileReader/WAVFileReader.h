@@ -22,6 +22,7 @@
 #include <string>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <WS2tcpip.h>
 #include <windows.h>
 #include <mmsystem.h>
 #else

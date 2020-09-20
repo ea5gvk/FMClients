@@ -51,10 +51,12 @@ CFMFileReader::CFMFileReader(const std::string& filename, unsigned int port) :
 m_filename(filename),
 m_port(port)
 {
+	CUDPSocket::startup();
 }
 
 CFMFileReader::~CFMFileReader()
 {
+	CUDPSocket::shutdown();
 }
 
 void CFMFileReader::run()

@@ -67,4 +67,3 @@ void CFIRFilter::reset()
     m_currentBufferPosition = 0U;
     ::memset(m_buffer, 0, m_tapsLength * sizeof(float));
 }
-
