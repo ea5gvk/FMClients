@@ -30,6 +30,7 @@
 #else
 #define LogError(fmt, ...)	::fprintf(stderr, fmt "\n", ## __VA_ARGS__)
 #define LogInfo(fmt, ...)	::fprintf(stderr, fmt "\n", ## __VA_ARGS__)
+#define LogMessage(fmt, ...)	::fprintf(stderr, fmt "\n", ## __VA_ARGS__)
 #endif
 
 CUDPSocket::CUDPSocket(const std::string& address, unsigned int port) :
