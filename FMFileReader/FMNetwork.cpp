@@ -40,6 +40,11 @@ bool CFMNetwork::open()
 	return m_socket.open();
 }
 
+bool CFMNetwork::isLinked() const
+{
+	return m_addrLen > 0U;
+}
+
 bool CFMNetwork::write(const unsigned char* data, unsigned int length)
 {
 	if (m_addrLen == 0U)
@@ -58,10 +63,9 @@ unsigned int CFMNetwork::read(unsigned char* data, unsigned int len)
 	if (length <= 0)
 		return 0U;
 
-	m_addr    = addr;
-	m_addrLen = addrlen;
-
 	if (::memcmp(data, "FMP", 3U) == 0) {			// A poll
+		m_addr = addr;
+		m_addrLen = addrlen;
 		write(data, length);
 		return 0U;
 	} else if (len >=  3 && (::memcmp(data, "FMD", 3U) || ::memcmp(data, "FME", 3U))) {

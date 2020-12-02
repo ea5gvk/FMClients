@@ -96,6 +96,16 @@ void CFMFileReader::run()
 	playoutTimer.start();
 	::fprintf(stdout, "Started\n");
 
+	// Wait for a poll to be received
+	do {
+		unsigned char data[200U];
+		network.read(data, 200U);
+
+		CThread::sleep(10U);
+	} while (!network.isLinked());
+
+	::fprintf(stdout, "Linked to the MMDVMHost\n");
+
 	bool running = true;
 	while (running) {
 		// A frame every 21 ms
@@ -116,6 +126,9 @@ void CFMFileReader::run()
 				running = false;
 			}
 		}
+
+		unsigned char data[200U];
+		network.read(data, 200U);
 
 		unsigned int ms = stopWatch.elapsedMilliSeconds();
 		stopWatch.start();
